@@ -1,0 +1,67 @@
+Language and Framework
+Language: Python 3.12
+GUI Framework: Tkinter
+External Services: Google Maps API, weather.gov (NOAA/NWS)
+
+
+Required Libraries
+
+Standard:
+-	tkinter, datetime, time, math
+-	json, os, re, pathlib, urllib.parse
+-	xml.etree.ElementTree, threading
+Third-Party:
+-	requests
+-	geopy
+-	dateutil
+
+Core Functions
+1.	calculate_eta():
+-	Estimates ETA based on miles, speed, HOS rules
+-	Supports planning by arrival or departure
+
+2.	calculate_smart_eta():
+- Uses Google Maps traffic + weather.gov alerts
+- Spaced sampling along route via polyline
+- Integrates break rules, traffic delays, and mountain state logic
+
+3.	open_density_calculator() & calculate_density():
+- GUI tool for pallet entry and NMFC class
+- Computes density, class, and LTL linear footage
+- Applies per-carrier overlength rules and blinking alerts
+
+4.	get_weather_alerts(lat, lon):
+-	Calls NWS Atom feed + alert API
+-	Summarizes weather threats (ice, fog, wind, etc.)
+
+5.	get_weather_along_route_parallel():
+-	Spaced sample points with async alert queries
+-	Merges alerts and returns combined route warning list
+
+6.	generate_smart_recommendations():
+-	Suggests driver/equipment based on cold states, tight windows, weekend rules
+-	Also flags holidays using get_us_holidays()
+
+7.	get_coordinates(), reverse_geocode_state_and_county():
+-	Used for mapping and region analysis
+
+8.	contact_help(), open_help_window():
+-	Offers UI help / opens email support window
+
+Carrier Overlength Logic
+-	Rules stored in a structured dictionary by carrier
+-	Triggers at various pallet and total length breakpoints
+-	Alerts grouped and blink on violation
+
+User Configuration
+- Primary config stored in: Documents/Transit Time Calculator/eta_config.json
+- Other user files include:
+- eta_log.txt (ETA tracking)
+- weather_cache.json (NWS alerts)
+- zip_county_cache.json (for reverse geocoding)
+- user_nmfc_data.json (user NMFC freight mappings)
+
+Logging and Troubleshooting
+-	Uses log_info, log_debug, log_warning, log_error
+-	Captures calculation inputs, flow logic, and UI events
+-	Common issues: 0 volume, invalid dates, traffic API fallback

@@ -1,0 +1,14 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+
+# Installer files
+build/
+dist/
+*.spec
+
+# Local config and keys
+.env
+secrets.json
+*.log
+*.cache
