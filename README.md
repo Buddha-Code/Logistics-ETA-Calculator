@@ -29,7 +29,7 @@ You'll need to replace all "REPLACE_ME" strings in the code with valid values or
 | Field                    | Function Name                      | Description |
 |--------------------------|------------------------------------|-------------|
 | GOOGLE_MAPS_API_KEY      | global (main.py)                   | Google Maps Directions API key used for route calculations |
-| ICON_BASE64              | get_temp_icon_path()               | Optional base64-encoded icon for the application window |
+| ICON_BASE64              | global (main.py)                   | Optional base64-encoded icon for the application window |
 | LOGO_BASE64              | global (main.py)                   | Optional base64 logo used for GUI header or branding |
 | User-Agent (Weather API) | get_weather_alerts()               | Required by NOAA — replace with an email or domain for identification |
 | mailto: links            | contact_help(), open_help_window() | Pre-filled support email link — replace with your actual support email |
