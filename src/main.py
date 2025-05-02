@@ -76,6 +76,10 @@ class LogRedirector:
 sys.stdout = LogRedirector(log_path)
 sys.stderr = sys.stdout
 
+
+# Custom logging wrappers for consistent output across the application.
+# Used for debugging, tracing logic flow, and surfacing warnings.
+
 def log_info(message):
     print(f"[INFO] {message}")
 
@@ -458,6 +462,8 @@ def setup_checkbutton_styles():
 
 _temp_icon_path = None
 
+# Decodes a base64 string into a temporary .ico file and returns its path.
+# Used for branding the GUI window or EXE.
 def get_temp_icon_path():
     global _temp_icon_path
     if _temp_icon_path is None:
@@ -771,7 +777,8 @@ def copy_to_clipboard():
         
 
 
-
+# Converts raw user NMFC entries into a dictionary keyed by description.
+# Each entry includes NMFC code and logic type (density-based, weight, etc.)
 
 def convert_user_nmfc_data_to_dict(user_data):
     converted = {}
@@ -838,7 +845,8 @@ def convert_user_nmfc_data_to_dict(user_data):
 
 
 
-
+# Opens a popup GUI allowing users to define new NMFC freight types,
+# supporting density, weight, value, or fixed class logic.
 def open_add_freight_type():
     import json
     import os
@@ -1028,7 +1036,8 @@ def bring_density_to_front():
 
 
 
-
+# Opens the LTL density calculator GUI.
+# Allows pallet-by-pallet entry and calculates class, linear feet, and overlength violations.
 
 def open_density_calculator():
     log_info("📦 open_density_calculator() called")
@@ -1066,6 +1075,10 @@ def open_density_calculator():
                 return freight_class, sub_code
         return density_map[-1][1], density_map[-1][2]
 
+# Estimates total linear footage required based on pallet width and trailer layout.
+# Simulates side-by-side placement (row fitting) using trailer width constraints (e.g. 98 inches).
+# Adds pallet lengths together in rows and totals the depth used.    
+    
     def calculate_ltl_linear_feet_from_entries(pallet_rows, trailer_width_in=98):
         log_debug("Calculating layout-based LTL linear feet")
         total_rows = 0
@@ -1637,6 +1650,9 @@ def format_eta(end_time):
 
 import re
 
+# Queries the NOAA weather.gov API for active alerts at a given coordinate.
+# Returns a formatted summary string of relevant hazards (e.g., snow, wind, flood).
+
 def get_weather_alerts(lat, lon):
     import os
     import json
@@ -1815,7 +1831,8 @@ def get_city_from_coordinates(lat, lon):
         return ""
 
 
-
+# Uses concurrent requests to fetch weather alerts along multiple route points.
+# Combines all alerts into a single summary string.
 
 def get_weather_along_route_parallel(route_coords, max_samples=10):
     if not route_coords or len(route_coords) < 2:
@@ -1903,7 +1920,8 @@ def haversine_distance(lat1, lon1, lat2, lon2):
     log_info(f"Haversine distance: {distance:.2f} miles between ({lat1},{lon1}) and ({lat2},{lon2})")
     return distance
 
-
+# Calculates transit time using mileage, speed, and HOS rules.
+# Optionally plans by arrival or departure depending on user toggle.
 
 def calculate_eta():
     try:
@@ -2016,6 +2034,9 @@ def get_us_holidays(year):
     holidays["Easter Sunday"] = easter
     return holidays
 
+# Analyzes route features to suggest driver or equipment notes.
+# Flags mountain routes, cold weather, holiday conflicts, or tight arrival windows.
+
 def generate_smart_recommendations(
     total_miles,
     origin_state,
@@ -2067,7 +2088,8 @@ def generate_smart_recommendations(
     return recommendations
 
 
-
+# Enhanced ETA calculation that integrates traffic, weather, and smart routing adjustments.
+# Uses Google Maps and NOAA APIs to adjust timing and provide planning notes.
 
 def calculate_smart_eta():
     try:
