@@ -2940,8 +2940,8 @@ from pathlib import Path
 import json
 
 def check_fit_and_suggest_upgrade_full_recalc(pallet_rows, selected_equipment, equipment_data, message_output_box=None):
-
     import math
+    from tkinter import BooleanVar
 
     def log(msg):
         print(msg)
@@ -2956,12 +2956,9 @@ def check_fit_and_suggest_upgrade_full_recalc(pallet_rows, selected_equipment, e
     selected_width = selected_dims["width"]
     selected_height = selected_dims["height"]
 
-    from tkinter import BooleanVar
-
     def calculate_length_for_equipment(width, height):
         total_length = 0
         pallet_instances = []
-        
 
         for idx, row in enumerate(pallet_rows, 1):
             try:
@@ -2980,11 +2977,17 @@ def check_fit_and_suggest_upgrade_full_recalc(pallet_rows, selected_equipment, e
                 fits_normal = original_width_in <= width
                 fits_rotated = original_length_in <= width
 
-                if is_turnable:
-                    if fits_rotated and (not fits_normal or original_length_in > original_width_in):
-                        pallet_length_in, pallet_width_in = original_width_in, original_length_in
-                        rotated = True
+                # Reject immediately if the pallet doesn't fit width-wise in any orientation
+                if not fits_normal and (not is_turnable or not fits_rotated):
+                    log(f"❌ Pallet too wide to fit in trailer width ({width}\"), even with turning.")
+                    return float('inf')
 
+                if is_turnable and fits_rotated and (not fits_normal or original_length_in > original_width_in):
+                    # Rotate for better fit
+                    pallet_length_in, pallet_width_in = original_width_in, original_length_in
+                    rotated = True
+
+                # Stack logic
                 max_stackable_count = max(height // pallet_height_in, 1)
                 actual_stack_count = min(stack_count_requested, max_stackable_count)
                 effective_pallets = quantity
@@ -2996,8 +2999,9 @@ def check_fit_and_suggest_upgrade_full_recalc(pallet_rows, selected_equipment, e
                         "depth": pallet_length_in,
                     })
 
-            except Exception:
-                return float('inf')  # Error case: skip this equipment
+            except Exception as e:
+                log(f"❌ Error parsing pallet row {idx}: {e}")
+                return float('inf')
 
         rows = []
         for pallet in pallet_instances:
@@ -3057,7 +3061,6 @@ def check_fit_and_suggest_upgrade_full_recalc(pallet_rows, selected_equipment, e
         log("❌ No equipment found that can fit this load.")
 
     return best_fit
-
 
 
 
